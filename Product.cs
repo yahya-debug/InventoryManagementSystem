@@ -30,8 +30,8 @@ class Product {
         }
     }
 
-    private double _quantity;
-    public required double quantity {
+    private int _quantity;
+    public required int quantity {
         get {
             return _quantity;
         }
@@ -48,5 +48,9 @@ class Product {
         this.name = name;
         this.price = price;
         this.quantity = quantity;
+    }
+
+    public override string ToString() {
+        return $"Product {{name: {name}; price: {price}; quantity: {quantity}}}";
     }
 }
