@@ -8,6 +8,7 @@ class Project {
     1- Add a Product
     2- View All Products
     3- Edit a Product
+    4- Delete a Product
     """;
     public static void Main(string[] args) {
 
@@ -29,7 +30,9 @@ class Project {
                     case 3:
                         editProduct();
                         break;
-
+                    case 4:
+                        deleteProduct();
+                        break;
                 }
             }
             
@@ -98,4 +101,19 @@ class Project {
             Console.WriteLine($"Editted");
         }
     }
+
+    private static void deleteProduct() {
+        Console.Write("Which Product yuu want to delete ");
+        string? name = Console.ReadLine();
+
+        if (!inventory.hasProduct(name ?? "")) {
+            Console.WriteLine("no product with this name, try show command");
+            return;
+        }
+
+        inventory.deleteProduct(name ?? "");
+        Console.WriteLine("Deleted");
+    }
+
+    
 }

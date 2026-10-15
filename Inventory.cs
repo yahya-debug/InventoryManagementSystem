@@ -22,7 +22,11 @@ class Inventory {
 
     public void editProduct(string original_name, string new_name, double price, int quantity) {
         addProduct(new Product(new_name, price, quantity));
-        _products.Remove(original_name);
+        deleteProduct(original_name);
     }
 
+
+    public void deleteProduct(string name) {
+        _products.Remove(name);
+    }
 }
