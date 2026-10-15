@@ -1,15 +1,15 @@
 using System;
 
 class Inventory {
-    private List<Product> _products;
-    public List<Product> products {get => _products;}
+    private Dictionary<string, Product> _products;
+    public Dictionary<string, Product> products {get => _products;}
 
     public Inventory() {
-        _products = new List<Product>();
+        _products = new Dictionary<string, Product>();
     }
 
     public void addProduct(Product product) {
-        _products.Add(product);
+        _products[product.name] = product;
     }
 
 }
