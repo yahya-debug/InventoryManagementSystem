@@ -9,7 +9,7 @@ class Product {
                 return "prod_xxx";
             return _name;
         }
-        set {
+        init {
             if (value.Trim().Length == 0)
                 throw new Exception("name is required");
 
