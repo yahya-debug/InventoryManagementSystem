@@ -1,0 +1,52 @@
+using System;
+using System.Diagnostics.CodeAnalysis;
+
+class Product {
+    private string? _name;
+    public required string name {
+        get {
+            if (_name == null)
+                return "prod_xxx";
+            return _name;
+        }
+        set {
+            if (value.Trim().Length == 0)
+                throw new Exception("name is required");
+
+            _name = value;
+        }
+    }
+
+    private double _price;
+    public required double price {
+        get {
+            return _price;
+        }
+        set {
+            if (value < 0)
+                throw new Exception("price can't be less than 0");
+            else
+                _price = value;
+        }
+    }
+
+    private double _quantity;
+    public required double quantity {
+        get {
+            return _quantity;
+        }
+        set {
+            if (value < 0)
+                throw new Exception("quantity can't be less than 0");
+            else
+                _quantity = value;
+        }
+    }
+
+    [SetsRequiredMembers]
+    public Product(string name, double price, int quantity) {
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+    }
+}
