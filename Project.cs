@@ -11,10 +11,11 @@ class Project {
     3- Edit a Product
     4- Delete a Product
     5- Search Products
+    6- Exit
     """;
     public static void Main(string[] args) {
-
-        while (true) {
+        bool boolean = true;
+        while (boolean) {
             Console.Write($"{menu}\n\nPlease choose the number of the function you want: ");
             string? input = Console.ReadLine();
             if (!int.TryParse(input, out int choice)) {
@@ -39,7 +40,13 @@ class Project {
                         case 5:
                             searchProducts();
                             break;
-                    
+                        case 6:
+                            boolean = false;
+                            Console.WriteLine("Good bye!");
+                            break;
+                        default:
+                            Console.WriteLine("no choice with this number");
+                            break;
                     }
                 } catch (Exception e) {
                     Console.WriteLine($"{e.Message}");
