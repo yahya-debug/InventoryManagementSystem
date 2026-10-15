@@ -21,23 +21,28 @@ class Project {
                 Console.WriteLine("Please choose a number");
                 continue;
             } else {
-                Console.Write("\n\n");
-                switch (choice) {
-                    case 1:
-                        addProduct();
-                        break;
-                    case 2:
-                        showAll();
-                        break;
-                    case 3:
-                        editProduct();
-                        break;
-                    case 4:
-                        deleteProduct();
-                        break;
-                    case 5:
-                        searchProducts();
-                        break;
+                try {
+                    Console.Write("\n\n");
+                    switch (choice) {
+                        case 1:
+                            addProduct();
+                            break;
+                        case 2:
+                            showAll();
+                            break;
+                        case 3:
+                            editProduct();
+                            break;
+                        case 4:
+                            deleteProduct();
+                            break;
+                        case 5:
+                            searchProducts();
+                            break;
+                    
+                    }
+                } catch (Exception e) {
+                    Console.WriteLine($"{e.Message}");
                 }
             }
             
