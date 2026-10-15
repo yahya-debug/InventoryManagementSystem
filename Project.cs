@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Net.Http.Headers;
 
 class Project {
@@ -9,6 +10,7 @@ class Project {
     2- View All Products
     3- Edit a Product
     4- Delete a Product
+    5- Search Products
     """;
     public static void Main(string[] args) {
 
@@ -32,6 +34,9 @@ class Project {
                         break;
                     case 4:
                         deleteProduct();
+                        break;
+                    case 5:
+                        searchProducts();
                         break;
                 }
             }
@@ -115,5 +120,13 @@ class Project {
         Console.WriteLine("Deleted");
     }
 
-    
+    private static void searchProducts() {
+        Console.Write("Product name: ");
+        string? name = Console.ReadLine();
+
+        Product? product = inventory.getProduct(name ?? "");
+        if (product == null)
+            Console.Write("Not found\n");
+        else Console.WriteLine(product);
+    }
 }

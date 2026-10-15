@@ -15,6 +15,12 @@ class Inventory {
         return _products.ContainsKey(name);
     }
 
+    public Product? getProduct(string name) {
+        if (!hasProduct(name))
+            return null;
+        return _products[name];
+    }
+
     public IEnumerable<Product> getAllProducts() {
         return _products.Values;
     }
