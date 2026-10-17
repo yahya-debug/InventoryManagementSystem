@@ -87,11 +87,10 @@ class Project {
             Console.WriteLine("Empty Inventory");
             return;
         }
-        int i = 1; // just a counter
-        foreach (var product in inventory.getAllProducts()) {
-            Console.WriteLine($"{i}- {product}");
-            i++;
-        }
+
+        int counter = 1;
+        foreach (var product in inventory.getAllProducts())
+            Console.WriteLine($"{counter++}- {product}");
         Console.WriteLine();
 
     }

@@ -1,10 +1,11 @@
 using System;
+using System.Collections.Concurrent;
 
 class Inventory {
-    private Dictionary<string, Product> _products;
+    private ConcurrentDictionary<string, Product> _products;
 
     public Inventory() {
-        _products = new Dictionary<string, Product>();
+        _products = new ConcurrentDictionary<string, Product>();
     }
 
     public void addProduct(Product product) {
@@ -27,12 +28,12 @@ class Inventory {
 
 
     public void editProduct(string original_name, string new_name, double price, int quantity) {
-        addProduct(new Product(new_name, price, quantity));
         deleteProduct(original_name);
+        addProduct(new Product(new_name, price, quantity));
     }
 
 
     public void deleteProduct(string name) {
-        _products.Remove(name);
+        _products.TryRemove(name, out _);
     }
 }

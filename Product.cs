@@ -5,9 +5,7 @@ class Product {
     private string? _name;
     public required string name {
         get {
-            if (_name == null)
-                return "prod_xxx";
-            return _name;
+            return _name!;
         }
         init {
             if (value.Trim().Length == 0)
@@ -23,8 +21,8 @@ class Product {
             return _price;
         }
         set {
-            if (value < 0)
-                throw new Exception("price can't be less than 0");
+            if (value <= 0)
+                throw new Exception("price can't be 0 or less");
             else
                 _price = value;
         }
