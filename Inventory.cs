@@ -3,13 +3,16 @@ using System.Collections.Concurrent;
 
 class Inventory {
     private ConcurrentDictionary<string, Product> _products;
+    private DB<Product, string> _db;
 
-    public Inventory() {
-        _products = new ConcurrentDictionary<string, Product>();
+    public Inventory(DB<Product, string> db) {
+        _products = db.read();
+        _db = db;
     }
 
     public void addProduct(Product product) {
         _products[product.name] = product;
+        _db.edit(_products);
     }
 
     public bool hasProduct(string name) {
@@ -28,12 +31,13 @@ class Inventory {
 
 
     public void editProduct(string original_name, string new_name, double price, int quantity) {
-        deleteProduct(original_name);
+        _products.TryRemove(original_name, out _);
         addProduct(new Product(new_name, price, quantity));
     }
 
 
     public void deleteProduct(string name) {
         _products.TryRemove(name, out _);
+        _db.edit(_products);
     }
 }

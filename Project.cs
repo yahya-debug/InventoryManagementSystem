@@ -3,7 +3,8 @@ using System.Globalization;
 using System.Net.Http.Headers;
 
 class Project {
-    private static Inventory inventory = new Inventory();
+    private static DB<Product, string> database = new("DB_file");
+    private static Inventory inventory = new Inventory(database);
     private static string menu = """
     **Inventory Management System**
     1- Add a Product
