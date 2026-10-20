@@ -3,33 +3,33 @@ using System.Diagnostics.CodeAnalysis;
 
 class Product {
     private string? _name;
-    public required string name {
+    public required string Name {
         get {
             return _name!;
         }
         init {
             if (value.Trim().Length == 0)
-                throw new Exception("name is required");
+                throw new UnNamedProductException("name is required");
 
             _name = value;
         }
     }
 
     private double _price;
-    public required double price {
+    public required double Price {
         get {
             return _price;
         }
         set {
             if (value <= 0)
-                throw new Exception("price can't be 0 or less");
+                throw new Exception("Price can't be 0 or less");
             else
                 _price = value;
         }
     }
 
     private int _quantity;
-    public required int quantity {
+    public required int Quantity {
         get {
             return _quantity;
         }
@@ -43,12 +43,12 @@ class Product {
 
     [SetsRequiredMembers]
     public Product(string name, double price, int quantity) {
-        this.name = name;
-        this.price = price;
-        this.quantity = quantity;
+        Name = name;
+        Price = price;
+        Quantity = quantity;
     }
 
     public override string ToString() {
-        return $"Product {{name: {name}; price: {price}; quantity: {quantity}}}";
+        return $"Product {{name: {Name}; Price: {Price}; quantity: {Quantity}}}";
     }
 }
