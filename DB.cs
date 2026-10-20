@@ -2,46 +2,44 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Text;
 using System.Text.Json;
-
+using Extensions;
+using Microsoft.Extensions.Configuration;
 
 class DB<T, Y> where Y : notnull {
     private readonly string? _filePath;
     private ConcurrentDictionary<Y, T> _values;
 
-    public DB(string file_key) {
-        DotNetEnv.Env.TraversePath().Load();
-        _filePath = Environment.GetEnvironmentVariable(file_key);
-        _values = read();
+    public DB(IConfiguration config, string fileKey) {
+        _filePath = config[$"DBFiles:{fileKey}"];
+        Console.WriteLine(_filePath);
+        _values = Read();
     }
 
-    public ConcurrentDictionary<Y, T> read() {
+    public ConcurrentDictionary<Y, T> Read() {
+        if (!File.Exists(_filePath))
+            throw new DBFileNotFoundException("DB file not found");
 
-        if (File.Exists(_filePath)) {
-            string file_txt = File.ReadAllText(_filePath!);
-            if (file_txt.Trim().Length == 0)
-                return new();
+        string fileText = File.ReadAllText(_filePath!);
+        if (fileText.Trim().Length == 0)
+            return [];
 
-            if (!(file_txt.Trim().StartsWith("{") && file_txt.Trim().EndsWith("}") || (file_txt.Trim().StartsWith("[") && file_txt.Trim().EndsWith("]"))))
-                throw new Exception("Format Error in DB files");
+        if (!fileText.IsJSON())
+            throw new JSONFormatException("Format Error in DB files");
 
-            return JsonSerializer.Deserialize<ConcurrentDictionary<Y, T>>(file_txt)!;
-        }
-        throw new Exception("DB file not found");
-
+        return JsonSerializer.Deserialize<ConcurrentDictionary<Y, T>>(fileText)!;
     }
 
-    private void write() {
+    private void Write() {
         // using will close the stream once we finish
-        using (FileStream file = new FileStream(_filePath!, FileMode.Create, FileAccess.Write, FileShare.Read)) {
-            string str_data = JsonSerializer.Serialize<ConcurrentDictionary<Y, T>>(_values);
-            // stream write accepts the array of bytes representing the data
-            byte[] bytes = Encoding.UTF8.GetBytes(str_data);
-            file.Write(bytes, 0, bytes.Length);
-        }
+        using FileStream file = new(_filePath!, FileMode.Create, FileAccess.Write, FileShare.Read);
+        var rawData = JsonSerializer.Serialize<ConcurrentDictionary<Y, T>>(_values);
+        // stream write accepts the array of bytes representing the data
+        byte[] bytes = Encoding.UTF8.GetBytes(rawData);
+        file.Write(bytes, 0, bytes.Length);
     }
 
-    public void edit(ConcurrentDictionary<Y, T> data) {
+    public void Edit(ConcurrentDictionary<Y, T> data) {
         _values = data;
-        write();
+        Write();
     }
 }

@@ -2,42 +2,45 @@ using System;
 using System.Collections.Concurrent;
 
 class Inventory {
-    private ConcurrentDictionary<string, Product> _products;
-    private DB<Product, string> _db;
+    private readonly ConcurrentDictionary<string, Product> _products;
+    private readonly DB<Product, string> _db;
 
     public Inventory(DB<Product, string> db) {
-        _products = db.read();
+        _products = db.Read();
         _db = db;
     }
 
-    public void addProduct(Product product) {
-        _products[product.name] = product;
-        _db.edit(_products);
+    public void AddProduct(Product product) {
+        if (HasProduct(product.Name))
+            throw new DuplicateProductsException($"Product with name {product.Name} already exists");
+
+        _products[product.Name] = product;
+        _db.Edit(_products);
     }
 
-    public bool hasProduct(string name) {
+    public bool HasProduct(string name) {
         return _products.ContainsKey(name);
     }
 
-    public Product? getProduct(string name) {
-        if (!hasProduct(name))
+    public Product? GetProduct(string name) {
+        if (!HasProduct(name))
             return null;
         return _products[name];
     }
 
-    public IEnumerable<Product> getAllProducts() {
+    public IEnumerable<Product> GetAllProducts() {
         return _products.Values;
     }
 
 
-    public void editProduct(string original_name, string new_name, double price, int quantity) {
-        _products.TryRemove(original_name, out _);
-        addProduct(new Product(new_name, price, quantity));
+    public void EditProduct(string originalName, string newName, double price, int quantity) {
+        _products.TryRemove(originalName, out _);
+        AddProduct(new Product(newName, price, quantity));
     }
 
 
-    public void deleteProduct(string name) {
+    public void DeleteProduct(string name) {
         _products.TryRemove(name, out _);
-        _db.edit(_products);
+        _db.Edit(_products);
     }
 }
