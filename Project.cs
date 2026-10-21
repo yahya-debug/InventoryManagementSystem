@@ -1,10 +1,20 @@
 using System;
 using System.Globalization;
 using System.Net.Http.Headers;
+using Microsoft.Extensions.Configuration;
 
 class Project {
-    private static Inventory inventory = new Inventory();
-    private static string menu = """
+    private readonly static JSONDB<Product, string> Database;
+    private readonly static Inventory Inventory;
+
+
+    static Project() {
+        IConfiguration config = Config();
+        Database = new(config, "Products");
+        Inventory = new(Database);
+    }
+
+    private readonly static string menu = """
     **Inventory Management System**
     1- Add a Product
     2- View All Products
@@ -26,19 +36,19 @@ class Project {
                     Console.Write("\n\n");
                     switch (choice) {
                         case 1:
-                            addProduct();
+                            AddProduct();
                             break;
                         case 2:
-                            showAll();
+                            ShowAll();
                             break;
                         case 3:
-                            editProduct();
+                            EditProduct();
                             break;
                         case 4:
-                            deleteProduct();
+                            DeleteProduct();
                             break;
                         case 5:
-                            searchProducts();
+                            SearchProducts();
                             break;
                         case 6:
                             boolean = false;
@@ -56,11 +66,11 @@ class Project {
         }
     }
 
-    private static void addProduct() {
+    private static void AddProduct() {
         Console.Write("Add Product:-\nProduct name: ");
         string? name = Console.ReadLine();
 
-        if (inventory.hasProduct(name ?? "")) {
+        if (Inventory.HasProduct(name ?? "")) {
             Console.Write("Already exists\n");
             return;
         }
@@ -70,74 +80,80 @@ class Project {
         Console.Write("Product quantity: ");
         string? quantity = Console.ReadLine();
         
-        if (!double.TryParse(price, out double price_parsed) || !int.TryParse(quantity, out int quantity_parsed))
-            throw new Exception("Wrong format in the fields you entered");
+        if (!double.TryParse(price, out double priceParsed) || !int.TryParse(quantity, out int quantityParsed))
+            throw new DataFormatException("Wrong format in the fields you entered");
         else {
-            Product product = new Product(name ?? "", price_parsed, quantity_parsed);
-            inventory.addProduct(product);
+            Product product = new Product(name ?? "", priceParsed, quantityParsed);
+            Inventory.AddProduct(product);
 
             Console.WriteLine($"Added the Item => {product}");
         }
     }
 
-    private static void showAll() {
+    private static void ShowAll() {
         Console.WriteLine("Products in Inventory:- ");
 
-        if (!inventory.getAllProducts().Any()) {
+        if (!Inventory.GetAllProducts().Any()) {
             Console.WriteLine("Empty Inventory");
             return;
         }
 
         int counter = 1;
-        foreach (var product in inventory.getAllProducts())
+        foreach (var product in Inventory.GetAllProducts())
             Console.WriteLine($"{counter++}- {product}");
         Console.WriteLine();
-
     }
 
-    private static void editProduct() {
+    private static void EditProduct() {
         Console.Write("Which Product you like to edit: ");
-        string? original_name = Console.ReadLine();
+        string? originalName = Console.ReadLine();
 
-        if (!inventory.hasProduct(original_name ?? "")) {
+        if (!Inventory.HasProduct(originalName ?? "")) {
             Console.WriteLine("no product with this name, try show command");
             return;
         }
         Console.Write("New Name: ");
-        string? new_name = Console.ReadLine();
+        string? newName = Console.ReadLine();
         Console.Write("New price: ");
         string? price = Console.ReadLine();
         Console.Write("New quantity: ");
         string? quantity = Console.ReadLine();
 
-        if (!double.TryParse(price, out double price_parsed) || !int.TryParse(quantity, out int quantity_parsed))
+        if (!double.TryParse(price, out double priceParsed) || !int.TryParse(quantity, out int quantityParsed))
             throw new Exception("Wrong format in the fields you entered");
         else {
-            inventory.editProduct(original_name ?? "", new_name ?? "", price_parsed, quantity_parsed);
+            Inventory.EditProduct(originalName ?? "", newName ?? "", priceParsed, quantityParsed);
             Console.WriteLine($"Editted");
         }
     }
 
-    private static void deleteProduct() {
+    private static void DeleteProduct() {
         Console.Write("Which Product yuu want to delete ");
         string? name = Console.ReadLine();
 
-        if (!inventory.hasProduct(name ?? "")) {
+        if (!Inventory.HasProduct(name ?? "")) {
             Console.WriteLine("no product with this name, try show command");
             return;
         }
 
-        inventory.deleteProduct(name ?? "");
+        Inventory.DeleteProduct(name ?? "");
         Console.WriteLine("Deleted");
     }
 
-    private static void searchProducts() {
+    private static void SearchProducts() {
         Console.Write("Product name: ");
         string? name = Console.ReadLine();
 
-        Product? product = inventory.getProduct(name ?? "");
+        Product? product = Inventory.GetProduct(name ?? "");
         if (product == null)
             Console.Write("Not found\n");
         else Console.WriteLine(product);
+    }
+
+    private static IConfiguration Config() {
+        return new ConfigurationBuilder()
+            .SetBasePath(AppContext.BaseDirectory)
+            .AddJsonFile("appsettings.json", optional: true)
+            .Build();
     }
 }
