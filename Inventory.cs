@@ -3,9 +3,9 @@ using System.Collections.Concurrent;
 
 class Inventory {
     private readonly ConcurrentDictionary<string, Product> _products;
-    private readonly DB<Product, string> _db;
+    private readonly IDB<Product, string> _db;
 
-    public Inventory(DB<Product, string> db) {
+    public Inventory(IDB<Product, string> db) {
         _products = db.Read();
         _db = db;
     }

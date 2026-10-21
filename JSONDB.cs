@@ -5,11 +5,11 @@ using System.Text.Json;
 using Extensions;
 using Microsoft.Extensions.Configuration;
 
-class DB<T, Y> where Y : notnull {
+class JSONDB<T, Y> : IDB<T, Y> where Y : notnull {
     private readonly string? _filePath;
     private ConcurrentDictionary<Y, T> _values;
 
-    public DB(IConfiguration config, string fileKey) {
+    public JSONDB(IConfiguration config, string fileKey) {
         _filePath = config[$"DBFiles:{fileKey}"];
         Console.WriteLine(_filePath);
         _values = Read();

@@ -4,7 +4,7 @@ using System.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
 
 class Project {
-    private readonly static DB<Product, string> Database;
+    private readonly static JSONDB<Product, string> Database;
     private readonly static Inventory Inventory;
 
 
